@@ -1,24 +1,33 @@
-import React, { useState } from 'react';
-import { Text, StyleSheet } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { Text, Alert } from 'react-native';
 import { Layout, Input, ButtonRounded } from '../components';
+import { AuthContext } from '../context/AuthContext';
 
 export default function LoginScreen({ navigation }) {
+  const { login } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
 
+  const onLogin = async () => {
+    try {
+      await login(email.trim(), pass);
+      Alert.alert("Bienvenido", "Inicio de sesión exitoso");
+    } catch (e) {
+      let msg = "Error desconocido";
+      if (e.code === "auth/user-not-found") msg = "Usuario no encontrado";
+      if (e.code === "auth/wrong-password") msg = "Contraseña incorrecta";
+      if (e.code === "auth/invalid-email") msg = "Correo inválido";
+      Alert.alert("Error", msg);
+    }
+  };
+
   return (
     <Layout>
-      <Text style={styles.title}>Iniciar Sesión</Text>
-
-      <Input placeholder="Correo electrónico" value={email} onChangeText={setEmail} />
+      <Text style={{ fontSize: 26, fontWeight: '700', marginBottom: 12 }}>Iniciar Sesión</Text>
+      <Input placeholder="Correo electrónico" value={email} onChangeText={setEmail} keyboardType="email-address" />
       <Input placeholder="Contraseña" value={pass} onChangeText={setPass} secureTextEntry />
-
-      <ButtonRounded text="Entrar" onPress={() => navigation.replace('Main')} />
-      <ButtonRounded text="Olvidé mi contraseña" color="#6c757d" />
+      <ButtonRounded text="Entrar" onPress={onLogin} />
+      <ButtonRounded text="¿No tienes cuenta? Crear una" color="#6c757d" onPress={() => navigation.navigate('Registro')} />
     </Layout>
   );
 }
-
-const styles = StyleSheet.create({
-  title: { fontSize: 24, fontWeight: '700', marginBottom: 20 },
-});

@@ -17,7 +17,7 @@ export default function BienvenidaScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  title: { fontSize: 38, fontWeight: '700', marginBottom: 8 },
-  subtitle: { fontSize: 16, color: '#555', marginBottom: 20 },
+  center: { flex:1, justifyContent:'center', alignItems:'center' },
+  title: { fontSize:36, fontWeight:'800' },
+  subtitle: { marginBottom:20, color:'#555' }
 });

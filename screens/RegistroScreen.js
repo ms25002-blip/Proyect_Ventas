@@ -1,27 +1,35 @@
-import React, { useState } from 'react';
-import { Text, StyleSheet } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { Text, Alert } from 'react-native';
 import { Layout, Input, ButtonRounded } from '../components';
+import { AuthContext } from '../context/AuthContext';
 
 export default function RegistroScreen({ navigation }) {
-  const [nombre, setNombre] = useState('');
-  const [correo, setCorreo] = useState('');
-  const [telefono, setTelefono] = useState('');
-  const [contraseña, setContraseña] = useState('');
+  const { register } = useContext(AuthContext);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [pass, setPass] = useState('');
+
+  const onRegister = async () => {
+    try {
+      await register({ name, email, password: pass });
+      Alert.alert("Cuenta creada", "Ya puedes iniciar sesión");
+      navigation.navigate("Login");
+    } catch (e) {
+      let msg = "Error desconocido";
+      if (e.code === "auth/email-already-in-use") msg = "Este correo ya está registrado";
+      if (e.code === "auth/weak-password") msg = "La contraseña debe tener 6 caracteres o más";
+      if (e.code === "auth/invalid-email") msg = "Correo inválido";
+      Alert.alert("Error", msg);
+    }
+  };
 
   return (
     <Layout>
-      <Text style={styles.title}>Crear Cuenta</Text>
-
-      <Input placeholder="Nombre completo" value={nombre} onChangeText={setNombre} />
-      <Input placeholder="Correo electrónico" value={correo} onChangeText={setCorreo} />
-      <Input placeholder="Número telefónico" value={telefono} onChangeText={setTelefono} />
-      <Input placeholder="Contraseña" value={contraseña} onChangeText={setContraseña} secureTextEntry />
-
-      <ButtonRounded text="Registrarme" onPress={() => navigation.navigate('Login')} />
+      <Text style={{ fontSize: 26, fontWeight: '700', marginBottom: 12 }}>Crear Cuenta</Text>
+      <Input placeholder="Nombre completo" value={name} onChangeText={setName} />
+      <Input placeholder="Correo electrónico" value={email} onChangeText={setEmail} keyboardType="email-address" />
+      <Input placeholder="Contraseña" value={pass} onChangeText={setPass} secureTextEntry />
+      <ButtonRounded text="Crear Cuenta" onPress={onRegister} />
     </Layout>
   );
 }
-
-const styles = StyleSheet.create({
-  title: { fontSize: 24, fontWeight: '700', marginBottom: 20 },
-});

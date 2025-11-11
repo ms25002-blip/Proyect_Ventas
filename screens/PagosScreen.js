@@ -1,18 +1,34 @@
-import React from 'react';
-import { Text, StyleSheet } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { Alert, Text } from 'react-native';
 import { Layout, ButtonRounded } from '../components';
+import { CartContext } from '../context/CartContext';
 
-export default function PagosScreen({ navigation }) {
+export default function PagosScreen({ navigation, route }) {
+  const { address, phone, paymentMethod } = route.params || {};
+  const { createOrder } = useContext(CartContext);
+  const [loading, setLoading] = useState(false);
+
+  const onConfirm = async () => {
+    try {
+      setLoading(true);
+      const orderId = await createOrder({ address, phone, paymentMethod });
+      setLoading(false);
+      navigation.replace('CompraConfirmada', { orderId });
+    } catch (e) {
+      setLoading(false);
+      Alert.alert('Error', e.message || 'No se pudo crear el pedido');
+    }
+  };
+
   return (
     <Layout>
-      <Text style={styles.title}>Métodos de Pago</Text>
-      <Text>Tarjeta, Paypal o efectivo</Text>
+      <Text style={{ fontSize:22, fontWeight:'700' }}>Revisar y Pagar</Text>
+      <Text style={{ marginVertical:8 }}>Dirección: {address}</Text>
+      <Text>Teléfono: {phone}</Text>
+      <Text>Método: {paymentMethod}</Text>
 
-      <ButtonRounded text="Confirmar pago" onPress={() => navigation.navigate('CompraConfirmada')} />
+      <ButtonRounded text={loading ? 'Procesando...' : 'Confirmar pago'} onPress={onConfirm} />
     </Layout>
   );
 }
 
-const styles = StyleSheet.create({
-  title: { fontSize: 24, fontWeight: '700', marginBottom: 10 },
-});
