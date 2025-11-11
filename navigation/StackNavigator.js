@@ -6,12 +6,13 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BienvenidaScreen from '../screens/BienvenidaScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegistroScreen from '../screens/RegistroScreen';
-import DrawerNavigator ./DrawerNavigatorwerNavigator';
+import DrawerNavigator from './DrawerNavigator';
 
 import DetalleProductoScreen from '../screens/DetalleProductoScreen';
 import ConfiguracionCompraScreen from '../screens/ConfiguracionCompraScreen';
 import PagosScreen from '../screens/PagosScreen';
 import CompraConfirmadaScreen from '../screens/CompraConfirmadaScreen';
+
 import { AuthContext } from '../context/AuthContext';
 
 const Stack = createNativeStackNavigator();
@@ -24,42 +25,46 @@ export default function StackNavigator() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Bienvenida"
+        initialRouteName={user ? "Main" : "Bienvenida"}
         screenOptions={{ headerTitleAlign: 'center' }}
       >
+
+        {/* Pantallas públicas */}
         {!user && (
           <>
-            <Stack.Screen name="Bienvenida" component={BienvenidaScreen} />
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Registro" component={RegistroScreen} />
+            <Stack.Screen 
+              name="Bienvenida" 
+              component={BienvenidaScreen}
+              options={{ headerShown: false }}
+            />
+
+            <Stack.Screen 
+              name="Login" 
+              component={LoginScreen}
+              options={{ title: "Iniciar Sesión" }}
+            />
+
+            <Stack.Screen 
+              name="Registro" 
+              component={RegistroScreen}
+              options={{ title: "Crear Cuenta" }}
+            />
           </>
         )}
 
+        {/* Navegación principal */}
         <Stack.Screen
           name="Main"
           component={DrawerNavigator}
           options={{ headerShown: false }}
         />
 
-        <Stack.Screen
-          name="DetalleProducto"
-          component={DetalleProductoScreen}
-          options={{ title: 'Detalle' }}
-        />
-
-        <Stack.Screen
-          name="ConfigCompra"
-          component={ConfiguracionCompraScreen}
-          options={{ title: 'Configurar compra' }}
-        />
-
-        <Stack.Screen name="Pagos" component={PagosScreen} />
-
-        <Stack.Screen
-          name="CompraConfirmada"
-          component={CompraConfirmadaScreen}
-          options={{ title: 'Confirmación' }}
-        />
+        {/* Resto de pantallas */}
+        <Stack.Screen name="DetalleProducto" component={DetalleProductoScreen}/>
+        <Stack.Screen name="ConfigCompra" component={ConfiguracionCompraScreen}/>
+        <Stack.Screen name="Pagos" component={PagosScreen}/>
+        <Stack.Screen name="CompraConfirmada" component={CompraConfirmadaScreen}/>
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

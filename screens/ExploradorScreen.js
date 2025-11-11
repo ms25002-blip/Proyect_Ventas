@@ -50,3 +50,4 @@ export default function ExploradorScreen({ navigation }) {
     </Layout>
   );
 }
+

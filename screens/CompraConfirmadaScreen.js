@@ -34,3 +34,4 @@ export default function CompraConfirmadaScreen({ navigation, route }) {
     </Layout>
   );
 }
+
